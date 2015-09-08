@@ -1,7 +1,7 @@
 package ca
 
 import (
-	"github.com/gophergala/sbuca/pkix"
+	"github.com/brimstone/sbuca/pkix"
 	"io/ioutil"
 	"strconv"
 )

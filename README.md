@@ -22,7 +22,7 @@ Current features:
 
 ## Installation
 
-    go get github.com/gophergala/sbuca
+    go get github.com/brimstone/sbuca
 
 
 ## Quick Start

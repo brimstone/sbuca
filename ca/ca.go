@@ -6,7 +6,7 @@ import (
 	//"errors"
 	"crypto/rand"
 	"crypto/x509"
-	"github.com/gophergala/sbuca/pkix"
+	"github.com/brimstone/sbuca/pkix"
 	"io/ioutil"
 	"math/big"
 	"os"

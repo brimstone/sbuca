@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	//"github.com/gophergala/sbuca/x509util"
-	"github.com/gophergala/sbuca/ca"
-	"github.com/gophergala/sbuca/pkix"
+	//"github.com/brimstone/sbuca/x509util"
+	"github.com/brimstone/sbuca/ca"
+	"github.com/brimstone/sbuca/pkix"
 	"net/http"
 	"strconv"
 )
