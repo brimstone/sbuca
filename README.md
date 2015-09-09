@@ -1,5 +1,8 @@
 # sbuca
 
+[![Build Status](https://travis-ci.org/brimstone/sbuca.svg)](https://travis-ci.org/brimstone/sbuca)
+
+
 Simple But Useful Certificate Authority
 
 When developing, it's always a pain to generate certificate for SSL/TLS usage. `sbuca` is the simple CA that helps you to generate what you just need in a painless way.
