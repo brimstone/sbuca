@@ -2,13 +2,15 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	//"github.com/brimstone/sbuca/x509util"
-	"github.com/brimstone/sbuca/ca"
-	"github.com/brimstone/sbuca/pkix"
 	"net/http"
 	"strconv"
+
+	"github.com/brimstone/sbuca/ca"
+	"github.com/brimstone/sbuca/pkix"
 )
 
 func Run(addr string) {

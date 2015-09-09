@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/codegangsta/cli"
-	"github.com/brimstone/sbuca/pkix"
-	"github.com/brimstone/sbuca/server"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/brimstone/sbuca/pkix"
+	"github.com/brimstone/sbuca/server"
+	"github.com/codegangsta/cli"
 )
 
 func main() {

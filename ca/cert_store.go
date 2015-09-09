@@ -1,9 +1,10 @@
 package ca
 
 import (
-	"github.com/brimstone/sbuca/pkix"
 	"io/ioutil"
 	"strconv"
+
+	"github.com/brimstone/sbuca/pkix"
 )
 
 type CertStore struct {

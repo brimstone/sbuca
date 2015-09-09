@@ -6,11 +6,12 @@ import (
 	//"errors"
 	"crypto/rand"
 	"crypto/x509"
-	"github.com/brimstone/sbuca/pkix"
 	"io/ioutil"
 	"math/big"
 	"os"
 	"strings"
+
+	"github.com/brimstone/sbuca/pkix"
 )
 
 type CA struct {
