@@ -13,14 +13,14 @@ import (
 	"github.com/brimstone/sbuca/pkix"
 )
 
-func Run(addr string) {
+func Run(addr string, rootDir string) {
 	fmt.Print("start...")
 
 	m := martini.Classic()
 	m.Use(render.Renderer())
 
 	//FIXME
-	ca.NewCA(".")
+	ca.NewCA(rootDir)
 
 	m.Get("/", func() string {
 		return "Hello sbuca"
@@ -29,7 +29,7 @@ func Run(addr string) {
 
 		format := req.URL.Query().Get("format")
 
-		newCA, err := ca.NewCA(".")
+		newCA, err := ca.NewCA(rootDir)
 		if err != nil {
 			panic(err)
 		}
@@ -53,7 +53,7 @@ func Run(addr string) {
 
 		format := req.URL.Query().Get("format")
 
-		newCA, err := ca.NewCA(".")
+		newCA, err := ca.NewCA(rootDir)
 		if err != nil {
 			panic(err)
 		}
@@ -105,7 +105,7 @@ func Run(addr string) {
 			panic(err)
 		}
 
-		newCA, err := ca.NewCA(".")
+		newCA, err := ca.NewCA(rootDir)
 		if err != nil {
 			panic(err)
 		}

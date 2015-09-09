@@ -22,10 +22,17 @@ func main() {
 		{
 			Name:  "server",
 			Usage: "Run a CA server",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "root",
+					Value: ".",
+					Usage: "Root directory for certificates",
+				},
+			},
 			Action: func(c *cli.Context) {
 				host := os.Getenv("HOST")
 				port := "8600"
-				server.Run(host + ":" + port)
+				server.Run(host+":"+port, c.String("root"))
 			},
 		},
 
