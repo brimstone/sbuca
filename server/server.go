@@ -1,21 +1,19 @@
 package server
 
 import (
-	"fmt"
-
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	//"github.com/brimstone/sbuca/x509util"
 	"net/http"
-	"strconv"
 
 	"github.com/brimstone/sbuca/ca"
-	"github.com/brimstone/sbuca/pkix"
 )
 
-func Run(config map[string]string) {
-	fmt.Print("start...")
+var config map[string]string
 
+func Run(myConfig map[string]string) {
+
+	config = myConfig
 	m := martini.Classic()
 	m.Use(render.Renderer())
 
@@ -29,114 +27,11 @@ func Run(config map[string]string) {
 		}
 	})
 
-	m.Get("/", func() string {
-		return "Hello sbuca"
-	})
-	m.Get("/ca/certificate", func(req *http.Request, params martini.Params, r render.Render) {
-
-		format := req.URL.Query().Get("format")
-
-		newCA, err := ca.NewCA(config["root-dir"])
-		if err != nil {
-			panic(err)
-		}
-
-		pem, err := newCA.Certificate.ToPEM()
-		if err != nil {
-			panic(err)
-		}
-
-		if format == "file" {
-			r.Data(200, pem)
-		} else {
-			r.JSON(200, map[string]interface{}{
-				"ca": map[string]interface{}{
-					"crt": string(pem),
-				},
-			})
-		}
-	})
-	m.Get("/certificates/:id", func(req *http.Request, params martini.Params, r render.Render) {
-
-		format := req.URL.Query().Get("format")
-
-		newCA, err := ca.NewCA(config["root-dir"])
-		if err != nil {
-			panic(err)
-		}
-
-		id := params["id"]
-		idInt, err := strconv.Atoi(id)
-		if err != nil {
-			r.JSON(401, map[string]interface{}{
-				"result": "wrong id",
-			})
-			return
-		}
-		cert, err := newCA.GetCertificate(int64(idInt))
-		if err != nil {
-			r.JSON(401, map[string]interface{}{
-				"result": "cannot get cert",
-			})
-			return
-		}
-
-		pem, err := cert.ToPEM()
-		if err != nil {
-			r.JSON(401, map[string]interface{}{
-				"result": "cannot get cert",
-			})
-			return
-		}
-
-		if format == "file" {
-			r.Data(200, pem)
-		} else {
-			r.JSON(200, map[string]interface{}{
-				"certificate": map[string]interface{}{
-					"id":  cert.GetSerialNumber().Int64(),
-					"crt": string(pem),
-					//"csr": csr,
-				},
-			})
-		}
-
-	})
-	m.Post("/certificates", func(req *http.Request, params martini.Params, r render.Render) {
-
-		csrString := req.PostFormValue("csr")
-		format := req.URL.Query().Get("format")
-
-		csr, err := pkix.NewCertificateRequestFromPEM([]byte(csrString))
-		if err != nil {
-			panic(err)
-		}
-
-		newCA, err := ca.NewCA(config["root-dir"])
-		if err != nil {
-			panic(err)
-		}
-
-		cert, err := newCA.IssueCertificate(csr)
-		if err != nil {
-			panic(err)
-		}
-
-		certPem, err := cert.ToPEM()
-		if err != nil {
-			panic(err)
-		}
-		if format == "file" {
-			r.Data(200, certPem)
-		} else {
-			r.JSON(200, map[string]interface{}{
-				"certificate": map[string]interface{}{
-					"id":  cert.GetSerialNumber().Int64(),
-					"crt": string(certPem),
-					//"csr": csr,
-				},
-			})
-		}
+	m.Group("", func(r martini.Router) {
+		r.Get("/", getRoot)
+		r.Get("/ca/certificate", getCA)
+		r.Get("/certificates/:id", getCertificates)
+		r.Post("/certificates", authorizeSigning, postCertificates)
 	})
 
 	m.RunOnAddr(config["address"])
