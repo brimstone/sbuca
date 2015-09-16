@@ -6,6 +6,7 @@ import (
 	//"errors"
 	"crypto/rand"
 	"crypto/x509"
+	gopkix "crypto/x509/pkix"
 	"io/ioutil"
 	"math/big"
 	"os"
@@ -63,8 +64,10 @@ func NewCA(rootDir string) (*CA, error) {
 		keyUsage := x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature
 		extKeyUsage := []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}
 		template := &x509.Certificate{
-			SerialNumber:          big.NewInt(1),
-			Subject:               pkix.GenSubject("try.subca.com"),
+			SerialNumber: big.NewInt(1),
+			Subject: gopkix.Name{
+				CommonName: "try.sbuca.com",
+			},
 			NotBefore:             notBefore,
 			NotAfter:              notAfter,
 			KeyUsage:              keyUsage,
