@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/brimstone/sbuca/pkix"
 	"github.com/brimstone/sbuca/server"
@@ -124,6 +125,10 @@ func main() {
 					Value: "cert",
 					Usage: "output cert or id",
 				},
+				cli.StringFlag{
+					Name:  "token",
+					Usage: "Authorization Token",
+				},
 			},
 			Action: func(c *cli.Context) {
 				host := c.String("host")
@@ -162,8 +167,14 @@ func main() {
 				data := make(url.Values)
 				data.Add("csr", string(pem))
 
-				//resp, err := http.Post("http://" + host + "/certificates", "text/plain", values.Encode())
-				resp, err := http.PostForm("http://"+host+"/certificates", data)
+				//resp, err := http.PostForm("http://"+host+"/certificates", data)
+				client := &http.Client{}
+				req, _ := http.NewRequest("POST", "http://"+host+"/certificates", strings.NewReader(data.Encode()))
+				req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+				if c.String("token") != "" {
+					req.Header.Set("X-API-KEY", c.String("token"))
+				}
+				resp, err := client.Do(req)
 				if err != nil {
 					fmt.Fprintln(os.Stderr, "[ERROR] Failed to request: "+err.Error())
 					return
@@ -231,10 +242,6 @@ func main() {
 					Name:  "host",
 					Usage: "Host ip & port",
 				},
-				cli.StringFlag{
-					Name:  "token",
-					Usage: "Authorization Token",
-				},
 			},
 			Usage: "Get CA's Certificate and output to STDOUT",
 			Action: func(c *cli.Context) {
@@ -245,12 +252,7 @@ func main() {
 					return
 				}
 
-				client := &http.Client{}
-				req, _ := http.NewRequest("GET", "http://"+host+"/ca/certificate", nil)
-				if c.String("token") != "" {
-					req.Header.Set("X-API-KEY", c.String("token"))
-				}
-				resp, err := client.Do(req)
+				resp, err := http.Get("http://" + host + "/ca/certificate")
 				if err != nil {
 					fmt.Fprintln(os.Stderr, "[ERROR] Failed to request CA cert: "+err.Error())
 					return
