@@ -13,14 +13,21 @@ import (
 	"github.com/brimstone/sbuca/pkix"
 )
 
-func Run(addr string, rootDir string) {
+func Run(config map[string]string) {
 	fmt.Print("start...")
 
 	m := martini.Classic()
 	m.Use(render.Renderer())
 
 	//FIXME
-	ca.NewCA(rootDir)
+	ca.NewCA(config["root-dir"])
+
+	// validate an api key
+	m.Use(func(res http.ResponseWriter, req *http.Request) {
+		if req.Header.Get("X-API-KEY") != "secret123" {
+			res.WriteHeader(http.StatusUnauthorized)
+		}
+	})
 
 	m.Get("/", func() string {
 		return "Hello sbuca"
@@ -29,7 +36,7 @@ func Run(addr string, rootDir string) {
 
 		format := req.URL.Query().Get("format")
 
-		newCA, err := ca.NewCA(rootDir)
+		newCA, err := ca.NewCA(config["root-dir"])
 		if err != nil {
 			panic(err)
 		}
@@ -53,7 +60,7 @@ func Run(addr string, rootDir string) {
 
 		format := req.URL.Query().Get("format")
 
-		newCA, err := ca.NewCA(rootDir)
+		newCA, err := ca.NewCA(config["root-dir"])
 		if err != nil {
 			panic(err)
 		}
@@ -105,7 +112,7 @@ func Run(addr string, rootDir string) {
 			panic(err)
 		}
 
-		newCA, err := ca.NewCA(rootDir)
+		newCA, err := ca.NewCA(config["root-dir"])
 		if err != nil {
 			panic(err)
 		}
@@ -132,6 +139,6 @@ func Run(addr string, rootDir string) {
 		}
 	})
 
-	m.RunOnAddr(addr)
+	m.RunOnAddr(config["address"])
 
 }

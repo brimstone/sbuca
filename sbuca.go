@@ -24,15 +24,34 @@ func main() {
 			Usage: "Run a CA server",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "root",
+					Name:  "dir",
 					Value: ".",
 					Usage: "Root directory for certificates",
 				},
+				cli.StringFlag{
+					Name:  "address",
+					Value: os.Getenv("HOST") + ":8600",
+					Usage: "Token for cert signing functions",
+				},
+				cli.StringFlag{
+					Name:  "admin-token",
+					Value: "",
+					Usage: "Token for administrative functions",
+				},
+				cli.StringFlag{
+					Name:  "sign-token",
+					Value: "",
+					Usage: "Token for cert signing functions",
+				},
 			},
 			Action: func(c *cli.Context) {
-				host := os.Getenv("HOST")
-				port := "8600"
-				server.Run(host+":"+port, c.String("root"))
+				config := map[string]string{
+					"address":     c.String("address"),
+					"root-dir":    c.String("dir"),
+					"admin-token": c.String("admin-token"),
+					"sign-token":  c.String("sign-token"),
+				}
+				server.Run(config)
 			},
 		},
 
@@ -212,23 +231,36 @@ func main() {
 					Name:  "host",
 					Usage: "Host ip & port",
 				},
+				cli.StringFlag{
+					Name:  "token",
+					Usage: "Authorization Token",
+				},
 			},
 			Usage: "Get CA's Certificate and output to STDOUT",
 			Action: func(c *cli.Context) {
 
 				host := c.String("host")
 				if host == "" {
-					fmt.Fprintln(os.Stderr, "[ERROR] Requere host as parameter")
+					fmt.Fprintln(os.Stderr, "[ERROR] Require host as parameter")
 					return
 				}
 
-				resp, err := http.Get("http://" + host + "/ca/certificate")
+				client := &http.Client{}
+				req, _ := http.NewRequest("GET", "http://"+host+"/ca/certificate", nil)
+				if c.String("token") != "" {
+					req.Header.Set("X-API-KEY", c.String("token"))
+				}
+				resp, err := client.Do(req)
 				if err != nil {
-					fmt.Fprintln(os.Stderr, "[ERROR] Failed to request: "+err.Error())
+					fmt.Fprintln(os.Stderr, "[ERROR] Failed to request CA cert: "+err.Error())
 					return
 				}
 
 				decoder := json.NewDecoder(resp.Body)
+				if resp.StatusCode != 200 {
+					fmt.Fprintln(os.Stderr, "[ERROR] Failed to request CA cert: "+resp.Status)
+					os.Exit(resp.StatusCode)
+				}
 				respData := make(map[string]map[string]interface{})
 				if err := decoder.Decode(&respData); err != nil {
 					panic(err)
