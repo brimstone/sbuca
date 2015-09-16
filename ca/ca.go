@@ -32,13 +32,13 @@ func NewCA(rootDir string) (*CA, error) {
 
 	// mkdir if needed
 	if isPathNotExisted(rootDir + "/ca") {
-		if err := os.Mkdir(rootDir+"/ca", 0755); err != nil {
+		if err := os.MkdirAll(rootDir+"/ca", 0755); err != nil {
 			return nil, err
 		}
 	}
 
 	if isPathNotExisted(rootDir + "/certs") {
-		if err := os.Mkdir(rootDir+"/certs", 0755); err != nil {
+		if err := os.MkdirAll(rootDir+"/certs", 0755); err != nil {
 			return nil, err
 		}
 	}
