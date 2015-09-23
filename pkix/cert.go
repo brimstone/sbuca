@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"math/big"
+	"strings"
 )
 
 type Certificate struct {
@@ -84,4 +85,66 @@ func (certificate *Certificate) ToPEMFile(filename string) error {
 }
 func (certificate *Certificate) GetSerialNumber() *big.Int {
 	return certificate.Crt.SerialNumber
+}
+
+func Marshal(name pkix.Name) (string, error) {
+	var output []string
+	if name.CommonName != "" {
+		output = append(output, "CN="+name.CommonName)
+	}
+	if len(name.Country) > 0 {
+		for i := range name.Country {
+			output = append(output, "C="+name.Country[i])
+		}
+	}
+	if len(name.Locality) > 0 {
+		for i := range name.Locality {
+			output = append(output, "L="+name.Locality[i])
+		}
+	}
+	if len(name.Province) > 0 {
+		for i := range name.Province {
+			output = append(output, "ST="+name.Province[i])
+		}
+	}
+	if len(name.StreetAddress) > 0 {
+		for i := range name.StreetAddress {
+			output = append(output, "SA="+name.StreetAddress[i])
+		}
+	}
+	if len(name.Organization) > 0 {
+		for i := range name.Organization {
+			output = append(output, "O="+name.Organization[i])
+		}
+	}
+	if len(name.OrganizationalUnit) > 0 {
+		for i := range name.OrganizationalUnit {
+			output = append(output, "OU="+name.OrganizationalUnit[i])
+		}
+	}
+	return strings.Join(output, ","), nil
+}
+
+func Unmarshal(dn string) (pkix.Name, error) {
+	var output pkix.Name
+	segments := strings.Split(dn, ",")
+	for segment := range segments {
+		identifier := strings.SplitN(segments[segment], "=", 2)
+		if identifier[0] == "CN" {
+			output.CommonName = identifier[1]
+		} else if identifier[0] == "C" {
+			output.Country = append(output.Country, identifier[1])
+		} else if identifier[0] == "L" {
+			output.Locality = append(output.Locality, identifier[1])
+		} else if identifier[0] == "ST" {
+			output.Province = append(output.Province, identifier[1])
+		} else if identifier[0] == "SA" {
+			output.StreetAddress = append(output.StreetAddress, identifier[1])
+		} else if identifier[0] == "O" {
+			output.Organization = append(output.Organization, identifier[1])
+		} else if identifier[0] == "OU" {
+			output.OrganizationalUnit = append(output.OrganizationalUnit, identifier[1])
+		}
+	}
+	return output, nil
 }
