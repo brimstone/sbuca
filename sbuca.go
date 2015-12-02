@@ -272,6 +272,22 @@ func main() {
 
 			},
 		},
+		{
+			Name: "oneshot",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "host",
+					Usage: "Host ip & port",
+				},
+			},
+			Usage: "Generate key, request, and submit to a server, all in one shot",
+			Action: func(c *cli.Context) {
+				//TODO genkey
+				//TODO gencsr
+				//TODO submitcsr
+				//TODO getcacrt
+			},
+		},
 	}
 
 	app.Run(os.Args)
