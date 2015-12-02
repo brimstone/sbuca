@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -279,10 +280,44 @@ func main() {
 					Name:  "host",
 					Usage: "Host ip & port",
 				},
+				cli.StringFlag{
+					Name:  "key",
+					Usage: "Path to private key file",
+				},
 			},
 			Usage: "Generate key, request, and submit to a server, all in one shot",
 			Action: func(c *cli.Context) {
-				//TODO genkey
+				keypath := c.String("key")
+				if keypath == "" {
+					fmt.Fprintln(os.Stderr, "Path to private key required")
+					return
+				}
+				keyfile, err := os.Create(keypath)
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+				defer keyfile.Close()
+
+				// genkey
+				key, err := pkix.NewKey()
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+
+				pem, err := key.ToPEM()
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+
+				n, err := io.WriteString(keyfile, string(pem))
+				if err != nil {
+					fmt.Println(n, err)
+				}
+				fmt.Println("Key written to", keypath)
+
 				//TODO gencsr
 				//TODO submitcsr
 				//TODO getcacrt
