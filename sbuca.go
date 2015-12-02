@@ -255,7 +255,7 @@ func main() {
 				resp, err := http.Get("http://" + host + "/ca/certificate")
 				if err != nil {
 					fmt.Fprintln(os.Stderr, "[ERROR] Failed to request CA cert: "+err.Error())
-					return
+					os.Exit(1)
 				}
 
 				decoder := json.NewDecoder(resp.Body)
