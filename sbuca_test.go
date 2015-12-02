@@ -39,6 +39,16 @@ func Test_main_genkey(t *testing.T) {
 	oldArgs := os.Args
 	defer func() { os.Args = oldArgs }()
 
-	os.Args = []string{"sbuca", "oneshot", "--key", "server.key"}
+	os.Args = []string{"sbuca",
+		"oneshot",
+		"--key",
+		"server.key",
+		"--crt",
+		"server.crt",
+		"--ca",
+		"ca.crt",
+		"--host",
+		"localhost:8600",
+	}
 	main()
 }
