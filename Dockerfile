@@ -1,9 +1,6 @@
-FROM golang:1.4.1
+FROM scratch
 
-RUN go get github.com/brimstone/sbuca
+CMD []
+ENTRYPOINT ["/sbuca"]
 
-VOLUME ["sbuca"]
-EXPOSE 8600
-
-ENTRYPOINT ["sbuca"]
-CMD ["server"]
+ADD sbuca /
