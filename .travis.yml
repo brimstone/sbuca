@@ -6,4 +6,4 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get -v -d
 script:
-  - $HOME/gopath/bin/goveralls -v -repotoken 4O0cPh1TK9gtytCvTuKZ4i4kj9V58ikyP
+  - make sbuca coveralls docker-image docker-push
