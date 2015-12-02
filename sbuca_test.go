@@ -12,6 +12,12 @@ func SetupTest() string {
 	if err != nil {
 		panic(err)
 	}
+
+	err = os.Chdir(dir)
+	if err != nil {
+		panic(err)
+	}
+
 	return dir
 }
 
