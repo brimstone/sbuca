@@ -1,6 +1,6 @@
 # sbuca
 
-[![Build Status](https://travis-ci.org/brimstone/sbuca.svg)](https://travis-ci.org/brimstone/sbuca)
+[![Build Status](https://travis-ci.org/brimstone/sbuca.svg)](https://travis-ci.org/brimstone/sbuca)[![Coverage Status](https://coveralls.io/repos/brimstone/sbuca/badge.svg?branch=master&service=github)](https://coveralls.io/github/brimstone/sbuca?branch=master)
 
 
 Simple But Useful Certificate Authority
