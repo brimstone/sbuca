@@ -4,7 +4,6 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	//"github.com/brimstone/sbuca/x509util"
-	"net/http"
 
 	"github.com/brimstone/sbuca/ca"
 )
@@ -19,13 +18,6 @@ func Run(myConfig map[string]string) {
 
 	//FIXME
 	ca.NewCA(config["root-dir"])
-
-	// validate an api key
-	m.Use(func(res http.ResponseWriter, req *http.Request) {
-		if req.Header.Get("X-API-KEY") != "secret123" {
-			res.WriteHeader(http.StatusUnauthorized)
-		}
-	})
 
 	m.Group("", func(r martini.Router) {
 		r.Get("/", getRoot)
